@@ -1,74 +1,70 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('./index');
 
-const Processo = sequelize.define('Processo', {
-  id: {
-    type: DataTypes.BIGINT,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-  numeroProcesso: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  descricao: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  status: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  tipo: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  dataInicio: {
-    type: DataTypes.DATE,
-    allowNull: false,
-  },
-}, {
-  tableName: 'processos',
-  timestamps: true,
-});
-
-Processo.associate = (models) => {
-  //ManyToOne com Cliente
-  Processo.belongsTo(models.Cliente, {
-    foreignKey: 'cliente_autor_id',
-    as: 'clienteAutor',
+module.exports = (sequelize) => {
+  const Processo = sequelize.define('Processo', {
+    id: {
+      type: DataTypes.BIGINT,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    numeroProcesso: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: true,
+    },
+    descricao: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    status: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    tipo: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    dataInicio: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+  }, {
+    tableName: 'processos',
+    timestamps: true, // Inclui colunas 'createdAt' e 'updatedAt'
   });
 
-  Processo.belongsTo(models.Cliente, {
-    foreignKey: 'cliente_reu_id',
-    as: 'clienteReu',
-  });
+  // Função para configurar associações
+  Processo.associate = (models) => {
+    // ManyToOne com Cliente (autor)
+    Processo.belongsTo(models.Cliente, {
+      foreignKey: 'clienteAutorId', // Alterado para consistência com camelCase
+      as: 'clienteAutor',
+    });
 
-  Processo.belongsTo(models.Advogado, {
-    foreignKey: 'advogado_autor_id',
-    as: 'advogadoAutor',
-  });
+    // ManyToOne com Cliente (réu)
+    Processo.belongsTo(models.Cliente, {
+      foreignKey: 'clienteReuId', // Alterado para consistência com camelCase
+      as: 'clienteReu',
+    });
 
-  Processo.belongsTo(models.Advogado, {
-    foreignKey: 'advogado_reu_id',
-    as: 'advogadoReu',
-  });
+    // ManyToOne com Advogado (autor)
+    Processo.belongsTo(models.Advogado, {
+      foreignKey: 'advogadoAutorId', // Alterado para consistência com camelCase
+      as: 'advogadoAutor',
+    });
 
-  //OneToMany com Audiencia
-  Processo.hasMany(models.Audiencia, {
-    foreignKey: 'processo_id',
-    as: 'audiencias',
-  });
+    // ManyToOne com Advogado (réu)
+    Processo.belongsTo(models.Advogado, {
+      foreignKey: 'advogadoReuId', // Alterado para consistência com camelCase
+      as: 'advogadoReu',
+    });
 
-  Processo.hasMany(models.RegistroDeInfo, {
-    foreignKey: 'processo_id',
-    as: 'registrosDeInfo',
-  });
+    // OneToMany com Audiencia
+    Processo.hasMany(models.Audiencia, {
+      foreignKey: 'processoId', // Alterado para consistência com camelCase
+      as: 'audiencias',
+    });
+  };
 
-  Processo.hasMany(models.Documento, {
-    foreignKey: 'processo_id',
-    as: 'documentos',
-  });
+  return Processo;
 };
-
-module.exports = Processo;

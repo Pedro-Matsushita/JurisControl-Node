@@ -1,6 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('./index');
 
+module.exports = (sequelize) => {
 const RegistroDeInfo = sequelize.define('RegistroDeInfo', {
   id: {
     type: DataTypes.BIGINT,
@@ -26,5 +27,5 @@ RegistroDeInfo.associate = (models) => {
     as: 'processo',
   });
 };
-
-module.exports = RegistroDeInfo;
+return RegistroDeInfo;
+};

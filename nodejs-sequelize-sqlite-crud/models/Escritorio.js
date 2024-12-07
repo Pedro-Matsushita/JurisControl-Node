@@ -1,6 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('./index');
 
+module.exports = (sequelize) => {
 const Escritorio = sequelize.define('Escritorio', {
   id: {
     type: DataTypes.BIGINT,
@@ -27,14 +28,14 @@ const Escritorio = sequelize.define('Escritorio', {
 
 Escritorio.associate = (models) => {
   Escritorio.hasMany(models.Advogado, {
-    foreignKey: 'escritorio_id',
+    foreignKey: 'escritorioId',
     as: 'advogados',
   });
 
   Escritorio.hasMany(models.Administrador, {
-    foreignKey: 'escritorio_id',
+    foreignKey: 'escritorioId',
     as: 'administradores',
   });
 };
-
-module.exports = Escritorio;
+return Escritorio;
+}

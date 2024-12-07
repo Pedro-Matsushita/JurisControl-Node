@@ -1,35 +1,38 @@
 const { DataTypes } = require('sequelize');
-const sequelize = require('./index');
-const Processo = require('./Processo');  
 
-const Audiencia = sequelize.define('Audiencia', {
-  id: {
-    type: DataTypes.BIGINT,
-    primaryKey: true,
-    autoIncrement: true,
-  },
-  dataHora: {
-    type: DataTypes.DATE,
-    allowNull: false,
-  },
-  local: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  resultado: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-}, {
-  tableName: 'audiencias',
-  timestamps: false,  // Defina como true caso queira timestamps automáticos
-});
+module.exports = (sequelize) => {
+  const Audiencia = sequelize.define('Audiencia', {
+    id: {
+      type: DataTypes.BIGINT,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    dataHora: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+    local: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    resultado: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+  }, {
+    tableName: 'audiencias',
+    timestamps: false, // Alterar para true caso timestamps automáticos sejam necessários
+  });
 
-// Relacionamento com o modelo Processo (ManyToOne)
-Audiencia.belongsTo(Processo, {
-  foreignKey: 'processo_id',
-  targetKey: 'id',
-  onDelete: 'CASCADE',  // Defina o comportamento desejado ao deletar um processo
-});
+  // Função para configurar as associações
+  Audiencia.associate = (models) => {
+    // Relacionamento ManyToOne com Processo
+    Audiencia.belongsTo(models.Processo, {
+      foreignKey: 'processoId', // CamelCase para consistência
+      as: 'processo',
+      onDelete: 'CASCADE', // Define o comportamento ao deletar um Processo
+    });
+  };
 
-module.exports = Audiencia;
+  return Audiencia;
+};

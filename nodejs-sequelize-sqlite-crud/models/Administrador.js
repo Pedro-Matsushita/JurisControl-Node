@@ -1,6 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('./index');
 
+module.exports = (sequelize) => {
 const Administrador = sequelize.define('Administrador', {
   id: {
     type: DataTypes.BIGINT,
@@ -34,9 +35,9 @@ const Administrador = sequelize.define('Administrador', {
 
 Administrador.associate = (models) => {
   Administrador.belongsTo(models.Escritorio, {
-    foreignKey: 'escritorio_id',
+    foreignKey: 'escritorioId',
     as: 'escritorio',
   });
 };
-
-module.exports = Administrador;
+return Administrador;
+}
